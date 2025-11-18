@@ -18,6 +18,7 @@
                         <td><span class="badge bg-info">{{ job.required_caregiving_type }}</span></td>
                         <td>{{ app.date_applied }}</td>
                         <td>
+                            <a href="{{ url_for('applications_edit', caregiver_id=app.caregiver_user_id, job_id=app.job_id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
                             <form method="POST" action="{{ url_for('applications_delete', caregiver_id=app.caregiver_user_id, job_id=app.job_id) }}" style="display: inline;">
                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete?')"><i class="fas fa-trash"></i></button>
                             </form>
