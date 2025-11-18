@@ -483,6 +483,37 @@ def applications_create():
     finally:
         db.close()
 
+@app.route('/applications/<int:caregiver_id>/<int:job_id>/edit', methods=['GET', 'POST'])
+def applications_edit(caregiver_id, job_id):
+    """Edit a job application"""
+    db = get_db()
+    try:
+        application = db.query(JobApplication).filter(
+            JobApplication.caregiver_user_id == caregiver_id,
+            JobApplication.job_id == job_id
+        ).first()
+        if not application:
+            flash('Job application not found!', 'danger')
+            return redirect(url_for('applications_list'))
+        
+        if request.method == 'POST':
+            application.date_applied = datetime.strptime(request.form['date_applied'], '%Y-%m-%d').date()
+            db.commit()
+            flash('Job application updated successfully!', 'success')
+            return redirect(url_for('applications_list'))
+        
+        caregiver_user = db.query(User).filter(
+            User.user_id == application.caregiver_user_id
+        ).first()
+        job = db.query(Job).filter(Job.job_id == application.job_id).first()
+        
+        return render_template('applications/edit.html', 
+                             application=application,
+                             caregiver_user=caregiver_user,
+                             job=job)
+    finally:
+        db.close()
+
 @app.route('/applications/<int:caregiver_id>/<int:job_id>/delete', methods=['POST'])
 def applications_delete(caregiver_id, job_id):
     """Delete a job application"""
